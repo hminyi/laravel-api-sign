@@ -28,13 +28,13 @@ Laravel and Lumen sign
 - Laravel
   在`Kernel.php`中添加中间件
   ```php
-    protected $middlewareGroups = [
-        'api' => [
-            Zsirius\\Signature\\Middleware\\ApiSign::class,
-        ],
-        'web' => [
-        ]
-    ];
+  protected $middlewareGroups = [
+      'api' => [
+          Zsirius\\Signature\\Middleware\\ApiSign::class,
+      ],
+      'web' => [
+      ]
+  ];
   ```
 - Lumen
   在`bootstrap/app.php`中添加
