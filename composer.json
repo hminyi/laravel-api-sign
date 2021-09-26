@@ -1,0 +1,37 @@
+{
+    "name": "zsirius/laravel-api-sign",
+    "description": "Laravel and lumen api sign",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Zsirius\\Signature\\": "src/"
+        }
+    },
+    "authors": [{
+        "name": "Sirius",
+        "email": "707759383@qq.com"
+    }],
+    "keywords": [
+        "signature"
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "ext-json": "*",
+        "php": "^7.3 || ^8.0"
+    },
+    "require-dev": {
+        "laravel/framework": "5.8.*",
+        "phpunit/phpunit": "~6.5"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Zsirius\\Signature\\Providers\\LaravelServiceProvider"
+            ],
+            "aliases": {
+                "Signature": "Zsirius\\Signature\\Facade\\Signature"
+            }
+        }
+    }
+}
