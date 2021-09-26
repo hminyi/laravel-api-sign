@@ -43,27 +43,22 @@ Laravel and Lumen sign
       Zsirius\Signature\Middleware\ApiSign::class,
   ]);
   $app->routeMiddleware([
-    'sign' => Zsirius\Signature\\Middleware\ApiSign::class,
+      'sign' => Zsirius\Signature\\Middleware\ApiSign::class,
   ]);
   ```
 
 
 ### 签名
-1、在`url`的参数中添加几个参数：
+1、在`url`中添加以下参数：
 
 - `appid`: 前后端约定好的应用ID。
-- `appsecret`: 前后端约定好的`appsecret`。
 - `timestamp`: 当前的时间戳。
 - `nonce`: 12位随机数。
 - `body`: 如果是`POST`请求，则需要添加此参数，数值为请求的`body`的 `md5` 哈希值，如果请求的`content-type=form-data`，则不需要添加 body 参数。
 
 2、排序
 
-将`url`的参数按照键名排序，排序的字符串获取其`md5`哈希值，赋予`sign`，并将其添加到参数中。
-
-3、移除参数
-
-将`token`参数移除，然后将所有的参数发送到服务器中。
+将`url`的参数按照键名排序，排序的字符串获取其`sha1`哈希值，连接`appsecret`值，进行`md5`加密，赋予`sign`，并将其添加到参数中。
 
 ### 验证
 验证不通过，抛出异常`Zsirius\Signature\Exceptions\SignException`，需自定义接收。
@@ -95,7 +90,7 @@ function sign(obj, signKey) {
   for (var i in keys) {
     arr[keys[i]] = obj[keys[i]]
   }
-  var sign = md5(sha1(querystring.stringify(arr)) + signKey) 
+  var sign = md5(sha1(qs.stringify(arr)) + signKey) 
   return sign
 }
 ```
@@ -109,13 +104,11 @@ var params = {
 params.appid = "202010102020";
 params.timestamp = parseInt(Date.now() / 1000);
 params.nonce = nonce(8);
-params.appsecret = 'D8PMQ1BHYCGbvVxcScLrjRi3fbq7OkOP';
-params['sign'] = sign(params);
-delete params.appsecret;
+params['sign'] = sign(params, 'D8PMQ1BHYCGbvVxcScLrjRi3fbq7OkOP');
 
 console.log('请求参数：');
 console.log(params);
-axios.get('/finance/transaction?' + querystring.stringify(params))
+axios.get('/finance/transaction?' + qs.stringify(params))
     .then(function (response) {
         console.log('返回数据');
         console.log(response.data);
@@ -134,18 +127,16 @@ var params = {
     appid: "202010102020",
     timestamp: parseInt(Date.now() / 1000),
     nonce: nonce(8),
-    appsecret: 'D8PMQ1BHYCGbvVxcScLrjRi3fbq7OkOP',
     body: md5(JSON.stringify(body)),
 };
-params['sign'] = sign(params);
-delete params.appsecret;
+params['sign'] = sign(params, 'D8PMQ1BHYCGbvVxcScLrjRi3fbq7OkOP');
 
 console.log('请求参数：');
 console.log(params);
 axios({
     method: 'POST',
     data: body,
-    url: '/auth/login?' + querystring.stringify(params),
+    url: '/auth/login?' + qs.stringify(params),
 }).then(function (response) {
     console.log('返回数据');
     console.log(response.data);
@@ -159,11 +150,8 @@ var params = {
     appid: "202010102020",
     timestamp: parseInt(Date.now() / 1000),
     nonce: nonce(8),
-    appsecret: 'D8PMQ1BHYCGbvVxcScLrjRi3fbq7OkOP',
 };
-
-params['sign'] = sign(params);
-delete params.appsecret;
+params['sign'] = sign(params, 'D8PMQ1BHYCGbvVxcScLrjRi3fbq7OkOP');
 
 console.log('请求参数：');
 console.log(params);
@@ -174,7 +162,7 @@ data.append('image', 'ADD');
 axios({
     method: 'POST',
     data: data,
-    url: '/common/upload/image?' + querystring.stringify(params),
+    url: '/common/upload/image?' + qs.stringify(params),
     headers: {
         'Content-Type': 'multipart/form-data'
     }
