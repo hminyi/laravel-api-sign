@@ -74,22 +74,29 @@ Laravel and Lumen sign
 
 通用方法：
 ```js
+function md5(str) {
+    return crypto.createHash('md5').update(str).digest('hex');
+}
+function sha1(str) {
+    return crypto.createHash('sha1').update(str).digest('hex');
+}
+function nonce(length) {
+  return Math.random().toString(36).substr(2, length);
+}
 function sign(obj, signKey) {
-  const arr = []
-  const keys = []
-  for (const i in obj) {
+  var arr = []
+  var keys = []
+  for (var i in obj) {
     if (typeof obj[i] !== 'object' && i !== 'signature') {
       keys.push(i)
     }
   }
   keys.sort()
-  for (const i in keys) {
+  for (var i in keys) {
     arr[keys[i]] = obj[keys[i]]
   }
-  const arr_str = qs.stringify(arr)
-  let arr_sha1 = crypto.createHash('sha1').update(arr_str).digest('hex')
-  arr_sha1 = arr_sha1 + signKey
-  return crypto.createHash('md5').update(arr_sha1).digest('hex')
+  var sign = md5(sha1(querystring.stringify(arr)) + signKey) 
+  return sign
 }
 ```
 
@@ -101,7 +108,7 @@ var params = {
 };
 params.appid = "202010102020";
 params.timestamp = parseInt(Date.now() / 1000);
-params.nonce = Math.random().toString(36).substr(2);
+params.nonce = nonce(8);
 params.appsecret = 'D8PMQ1BHYCGbvVxcScLrjRi3fbq7OkOP';
 params['sign'] = sign(params);
 delete params.appsecret;
@@ -126,7 +133,7 @@ var body = {
 var params = {
     appid: "202010102020",
     timestamp: parseInt(Date.now() / 1000),
-    nonce: Math.random().toString(36).substr(2),
+    nonce: nonce(8),
     appsecret: 'D8PMQ1BHYCGbvVxcScLrjRi3fbq7OkOP',
     body: md5(JSON.stringify(body)),
 };
@@ -151,7 +158,7 @@ axios({
 var params = {
     appid: "202010102020",
     timestamp: parseInt(Date.now() / 1000),
-    nonce: Math.random().toString(36).substr(2),
+    nonce: nonce(8),
     appsecret: 'D8PMQ1BHYCGbvVxcScLrjRi3fbq7OkOP',
 };
 

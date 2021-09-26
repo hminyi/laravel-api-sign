@@ -41,7 +41,7 @@ class ApiSign
         $sign = $params['sign'] ?? ''; // 加密签名
         unset($params['sign']);
 
-        if ($this->createSign($params) != $sign) {
+        if ($this->createSign($params) != strtoupper($sign)) {
             throw new SignException('sign error');
         }
     }
@@ -71,7 +71,7 @@ class ApiSign
      */
     protected function getConfig($app_id)
     {
-        $config = app('config')->get('signature');
+        $config = app('config')->get('signature') ?? [];
 
         $info = [];
         foreach ($config as $v) {
