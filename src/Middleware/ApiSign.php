@@ -25,7 +25,9 @@ class ApiSign
                 $params['body'] = md5($request->getContent());
             }
         }
-        Signature::checkSign($params); // 不通过抛出异常
+        if (config('signature.status')) {
+            Signature::checkSign($params); // 不通过抛出异常
+        }
         return $next($request);
     }
 }

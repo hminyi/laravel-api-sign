@@ -71,10 +71,10 @@ class ApiSign
      */
     protected function getConfig($app_id)
     {
-        $config = app('config')->get('signature') ?? [];
+        $apps = config('signature.apps') ?? [];
 
         $info = [];
-        foreach ($config as $v) {
+        foreach ($apps as $v) {
             if ($v['app_id'] == $app_id) {
                 $info = $v;
                 break;
