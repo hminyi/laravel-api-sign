@@ -27,7 +27,7 @@ class ApiSign
         $appid = $params['appid'];
         $timestamp = $params['timestamp'] ?? $now;
         // 密钥信息
-        $info = $this->getSignInfo($appid);
+        $info = $this->getConfig($appid);
         // 检查密钥状态
         if (!$info || !$info['status']) {
             throw new SignException('key failure');
@@ -55,7 +55,7 @@ class ApiSign
      */
     protected function createSign($params)
     {
-        $info = $this->getSignInfo($params['appid']);
+        $info = $this->getConfig($params['appid']);
         $app_secret = $info['app_secret'] ?? '';
 
         ksort($params);
@@ -69,7 +69,7 @@ class ApiSign
      * @param  int          $app_id
      * @return array|null
      */
-    protected function getSignInfo($app_id)
+    protected function getConfig($app_id)
     {
         $config = app('config')->get('signature');
 
