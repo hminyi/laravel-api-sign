@@ -22,7 +22,7 @@ Laravel and Lumen sign
   ```php
   $app->configure('signature');
 
-  $app->register(Zsirius\\Signature\\Providers\LumenServiceProvider::class);
+  $app->register(Zsirius\Signature\Providers\LumenServiceProvider::class);
   ```
 3、中间件
 - Laravel
@@ -30,7 +30,7 @@ Laravel and Lumen sign
   ```php
   protected $middlewareGroups = [
       'api' => [
-          Zsirius\\Signature\\Middleware\\ApiSign::class,
+          Zsirius\Signature\Middleware\ApiSign::class,
       ],
       'web' => [
       ]
@@ -40,10 +40,10 @@ Laravel and Lumen sign
   在`bootstrap/app.php`中添加
   ```php
   $app->middleware([
-      Zsirius\\Signature\\Middleware\\ApiSign::class,
+      Zsirius\Signature\Middleware\ApiSign::class,
   ]);
   $app->routeMiddleware([
-    'sign' => Zsirius\\Signature\\Middleware\\ApiSign::class,
+    'sign' => Zsirius\Signature\\Middleware\ApiSign::class,
   ]);
   ```
 
@@ -52,8 +52,9 @@ Laravel and Lumen sign
 1、在`url`的参数中添加几个参数：
 
 - `appid`: 前后端约定好的应用ID。
-- `timestamp`: 当前的时间戳。
 - `appsecret`: 前后端约定好的`appsecret`。
+- `timestamp`: 当前的时间戳。
+- `nonce`: 12位随机数。
 - `body`: 如果是`POST`请求，则需要添加此参数，数值为请求的`body`的 `md5` 哈希值，如果请求的`content-type=form-data`，则不需要添加 body 参数。
 
 2、排序
@@ -73,22 +74,22 @@ Laravel and Lumen sign
 
 通用方法：
 ```js
-function sortDict(dict)
-{
-    var dict2 = {},
-        keys = Object.keys(dict).sort();
-
-    for (var i = 0, n = keys.length, key; i < n; ++i) {
-        key = keys[i];
-        dict2[key] = dict[key];
+function sign(obj, signKey) {
+  const arr = []
+  const keys = []
+  for (const i in obj) {
+    if (typeof obj[i] !== 'object' && i !== 'signature') {
+      keys.push(i)
     }
-
-    return dict2;
-}
-
-function md5(str)
-{
-    return crypto.createHash('md5').update(str).digest('hex');
+  }
+  keys.sort()
+  for (const i in keys) {
+    arr[keys[i]] = obj[keys[i]]
+  }
+  const arr_str = qs.stringify(arr)
+  let arr_sha1 = crypto.createHash('sha1').update(arr_str).digest('hex')
+  arr_sha1 = arr_sha1 + signKey
+  return crypto.createHash('md5').update(arr_sha1).digest('hex')
 }
 ```
 
@@ -102,8 +103,7 @@ params.appid = "202010102020";
 params.timestamp = parseInt(Date.now() / 1000);
 params.nonce = Math.random().toString(36).substr(2);
 params.appsecret = 'D8PMQ1BHYCGbvVxcScLrjRi3fbq7OkOP';
-params = sortDict(params);
-params['sign'] = md5(querystring.stringify(params));
+params['sign'] = sign(params);
 delete params.appsecret;
 
 console.log('请求参数：');
@@ -130,8 +130,7 @@ var params = {
     appsecret: 'D8PMQ1BHYCGbvVxcScLrjRi3fbq7OkOP',
     body: md5(JSON.stringify(body)),
 };
-params = sortDict(params);
-params['sign'] = md5(querystring.stringify(params));
+params['sign'] = sign(params);
 delete params.appsecret;
 
 console.log('请求参数：');
@@ -156,8 +155,7 @@ var params = {
     appsecret: 'D8PMQ1BHYCGbvVxcScLrjRi3fbq7OkOP',
 };
 
-params = sortDict(params);
-params['sign'] = md5(querystring.stringify(params));
+params['sign'] = sign(params);
 delete params.appsecret;
 
 console.log('请求参数：');

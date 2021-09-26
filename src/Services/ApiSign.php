@@ -14,11 +14,11 @@ class ApiSign
      */
     public function checkSign($params)
     {
-        if (array_key_exists('appid', $params)) {
+        if (!array_key_exists('appid', $params)) {
             throw new SignException('should have appid');
         }
 
-        if (array_key_exists('sign', $params)) {
+        if (!array_key_exists('sign', $params)) {
             throw new SignException('should have sign');
         }
 
@@ -40,9 +40,8 @@ class ApiSign
         // 检查签名
         $sign = $params['sign'] ?? ''; // 加密签名
         unset($params['sign']);
-        // 增加appsecret
-        $params['appsecret'] = $info['app_secret'] ?? '';
-        if (strtoupper($this->createSign($params)) != strtoupper($sign)) {
+
+        if ($this->createSign($params) != $sign) {
             throw new SignException('sign error');
         }
     }
@@ -54,13 +53,14 @@ class ApiSign
      * @param  string   $token
      * @return string
      */
-    public function createSign($params)
+    protected function createSign($params)
     {
+        $info = $this->getSignInfo($params['appid']);
+        $app_secret = $info['app_secret'] ?? '';
+
         ksort($params);
-        $sign_str = collect($params)->map(function ($value, $key) {
-            return "$key=$value";
-        })->implode('&');
-        return md5($sign_str);
+        $sign_str = http_build_query($params);
+        return strtoupper(md5(sha1($sign_str) . $app_secret));
     }
 
     /**

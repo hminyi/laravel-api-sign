@@ -14,7 +14,7 @@ class LaravelServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton('Signature', ApiSign::class);
+        $this->app->singleton('signature', ApiSign::class);
     }
 
     /**
