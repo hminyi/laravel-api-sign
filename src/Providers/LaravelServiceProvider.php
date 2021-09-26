@@ -5,7 +5,7 @@ namespace Zsirius\Signature\Providers;
 use Illuminate\Support\ServiceProvider;
 use Zsirius\Signature\Services\ApiSign;
 
-class LaravelService extends ServiceProvider
+class LaravelServiceProvider extends ServiceProvider
 {
     /**
      * Register services.

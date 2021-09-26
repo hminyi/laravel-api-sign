@@ -21,7 +21,7 @@
         "php": "^7.3 || ^8.0"
     },
     "require-dev": {
-        "laravel/framework": "5.8.*",
+        "laravel/framework": "8.*",
         "phpunit/phpunit": "~6.5"
     },
     "extra": {
