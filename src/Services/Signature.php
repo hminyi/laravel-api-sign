@@ -4,7 +4,7 @@ namespace Zsirius\Signature\Services;
 
 use Zsirius\Signature\Exceptions\SignException;
 
-class ApiSign
+class Signature
 {
     /**
      * 检查sign是否匹配

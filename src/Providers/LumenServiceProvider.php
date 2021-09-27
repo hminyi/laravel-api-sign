@@ -3,7 +3,7 @@
 namespace Zsirius\Signature\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Zsirius\Signature\Services\ApiSign;
+use Zsirius\Signature\Services\Signature;
 
 class LumenServiceProvider extends ServiceProvider
 {
@@ -14,7 +14,7 @@ class LumenServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton('signature', ApiSign::class);
+        $this->app->singleton('signature', Signature::class);
     }
 
     /**
